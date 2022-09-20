@@ -8,6 +8,6 @@ public class AppController {
 
     @GetMapping("/api/ping")
     public String ping(){
-        return "Service is up and running...";
+        return "Server is up...";
     }
 }
