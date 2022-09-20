@@ -1,0 +1,36 @@
+version: 1
+jobs:
+  build:
+    machine:
+      image: ubuntu-2204:2022.04.2
+
+    working_directory: ~/app
+    steps:
+      # git pull
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - app-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: app-{{ checksum "pom.xml" }}
+
+      # package into a jar
+      - run:
+          name: Packaging
+          command : mvn clean package
+
+      - run:
+          name: Setting up Docker
+          command: |
+            echo $DOCKER_PASS | docker login --username $DOCKER_USER --password-stdin
+
+      - run:
+          name: Push app to DockerHub
+          command: |
+            docker build --tag=aliyura/carbon-app:latest .
+            docker push aliyura/carbon-app:latest
