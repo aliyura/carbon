@@ -35,9 +35,3 @@ jobs:
             docker build --tag=aliyura/carbon-app:latest .
             docker push aliyura/carbon-app:latest
 
-      - run:
-          name: Deploying
-          command: |
-            ssh $SERVER_HOST
-            docker pull aliyura/carbon-app:latest
-            docker run -d -p 8081:8081 aliyura/carbon-app:latest
